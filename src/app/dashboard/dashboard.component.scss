@@ -1,0 +1,27 @@
+@import "../../styles/variables";
+
+:host {
+  display: flex;
+  flex-wrap: wrap;
+
+  .chart-item {
+    margin: $chart-item-margin;
+    width: $chart-item-width;
+    flex-basis: $chart-item-width-basis;
+    flex-grow: 1;
+  }
+
+  .item-placeholder {
+    width: $chart-item-width;
+    margin: $chart-item-margin;
+    flex-basis: $chart-item-width-basis;
+    flex-grow: 1;
+  }
+
+  .new-item-placeholder {
+    width: $chart-item-width;
+    margin: $chart-item-margin;
+    flex-basis: $chart-item-width-basis;
+    flex-grow: 1;
+  }
+}
