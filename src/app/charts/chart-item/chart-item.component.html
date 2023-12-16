@@ -11,13 +11,12 @@
     </button>
   </mat-card-header>
     <app-chart [chartStyle]="chartStyle"
-               [dataSource]="chartDataSource">
+               [chartItems]="chartItems">
     </app-chart>
   <mat-card-content>
     
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button>LIKE</button>
-    <button mat-button>SHARE</button>
+    <app-chart-new (chartCreated)="addSeries($event)"></app-chart-new>
   </mat-card-actions>
 </mat-card>

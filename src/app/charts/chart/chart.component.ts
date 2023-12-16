@@ -1,8 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import HC_stock from 'highcharts/modules/stock';
-import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ChartStyle } from '../chart-style';
+import { ChartUpdateService } from '../chart-update.service';
+import { ChartItem } from '../chart-item/chart-item';
 
 HC_stock(Highcharts);
 
@@ -15,10 +17,11 @@ interface ExtendedPlotCandlestickDataGroupingOptions extends Highcharts.DataGrou
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.scss']
 })
-export class ChartComponent {
-  private _chartStyle: ChartStyle = "line";
+export class ChartComponent implements OnDestroy {
+  private _chartStyle!: ChartStyle;
+  private _destroy: Subject<void> = new Subject<void>();
 
-  @Input() dataSource!: Observable<number[]>;
+  @Input() chartItems: ChartItem[] = [];
   @Input()
   set chartStyle(style: ChartStyle) {
     this._chartStyle = style;
@@ -32,13 +35,29 @@ export class ChartComponent {
   chartRef!: Highcharts.Chart;
   chartOptions: Highcharts.Options;
   
-  constructor() {
+  constructor(private readonly _chartUpdateService: ChartUpdateService) {
     this.chartOptions = this.initChartOptions();
+  }
+
+  ngOnDestroy(): void {
+    this._destroy.next();
+    this._destroy.complete();
   }
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chartRef = chart;
   };
+
+  addChartItem(item: ChartItem): void {
+    if (this.chartItems.find(i => i.name === item.name))
+      return;
+    
+    this.chartItems.push(item);
+    item.source.subscribe(data  => {
+      const series = this.createSeriesOptions(data, item.name);
+      this.chartRef.addSeries(series, true);
+    });
+  }
 
   private initChartOptions(): Highcharts.Options {
     return {
@@ -54,34 +73,22 @@ export class ChartComponent {
   }
 
   private loadChartData(): void {
-    this.dataSource.subscribe(data  => {
-      const chartData = [ ...data ];
-      const series = this.createSeriesOptions(chartData);
-      this.addSeries(series, false);
-      this.update(chartData);
+    this.chartItems.forEach(item => {
+      item.source.subscribe(data  => {
+        const series = this.createSeriesOptions(data, item.name);
+        this.chartRef.addSeries(series, true);
+      });
     });
   }
 
-  private update(data: number[]): void {
-    this.chartRef.update({ 
-      navigator: {
-        series: {
-         data: data
-        }
-      }
-    });
-  }
-
-  private addSeries(options: Highcharts.SeriesOptionsType, redraw?: boolean): void {
-    this.chartRef.addSeries(options, redraw);
-  }
-  private createSeriesOptions(data: number[]): Highcharts.SeriesOptionsType {
+  private createSeriesOptions(data: number[], name: string): Highcharts.SeriesOptionsType {
     return { 
       type: this.chartStyle,
       data: data,
+      name: name,
       dataGrouping: {
         enabled: false
-      }// as ExtendedPlotCandlestickDataGroupingOptions
+      } as ExtendedPlotCandlestickDataGroupingOptions
     }
   }
 
@@ -89,8 +96,9 @@ export class ChartComponent {
     if (!this.chartRef)
       return;
 
-    this.chartRef.series.forEach(serie => {
-      serie.remove(false);
+    const series = [...this.chartRef.series];
+    series.forEach(series => {
+      series.remove(true);
     })
 
     this.loadChartData();

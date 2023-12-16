@@ -23,5 +23,9 @@
     margin: $chart-item-margin;
     flex-basis: $chart-item-width-basis;
     flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
   }
 }

@@ -96,7 +96,7 @@ export class ChartsRemoteService {
       },
       hourly: {
         time: ["13:00","14:00","15:00"],
-        surface_pressure: [1177,1200,1150]
+        surface_pressure: [20,10,30]
       }
     })
   }

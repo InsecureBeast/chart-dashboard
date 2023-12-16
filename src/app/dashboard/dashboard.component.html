@@ -1,7 +1,6 @@
 <div *ngFor="let item of charts" class="chart-item">
   <app-chart-item (closed)="itemClose(item)"
-                  [chartDataSource]="item.source"
-                  [title]="item.name">
+                  [chartItems]="[item]">
   </app-chart-item>
 </div>
 
