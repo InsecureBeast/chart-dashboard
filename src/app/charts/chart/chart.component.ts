@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import HC_stock from 'highcharts/modules/stock';
 import { Observable } from 'rxjs';
+import { ChartStyle } from '../chart-style';
 
 HC_stock(Highcharts);
 
@@ -15,31 +16,42 @@ interface ExtendedPlotCandlestickDataGroupingOptions extends Highcharts.DataGrou
   styleUrls: ['./chart.component.scss']
 })
 export class ChartComponent {
+  private _chartStyle: ChartStyle = "line";
 
-  @Input() data: number[] = [];
   @Input() dataSource!: Observable<number[]>;
+  @Input()
+  set chartStyle(style: ChartStyle) {
+    this._chartStyle = style;
+    this.updateStyle();
+  }
+  get chartStyle(): ChartStyle {
+    return this._chartStyle;
+  }
 
-  chartStyle: "line" | "column" = "line";
   Highcharts: typeof Highcharts = Highcharts;
   chartRef!: Highcharts.Chart;
-  chartOptions: Highcharts.Options = {
-    chart: {
-      events: {
-        load: () => this.loadChartData()
-      },
-      
-    }, 
-    title: {
-      text: undefined
-    }
-  };
-
+  chartOptions: Highcharts.Options;
+  
   constructor() {
+    this.chartOptions = this.initChartOptions();
   }
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chartRef = chart;
   };
+
+  private initChartOptions(): Highcharts.Options {
+    return {
+      chart: {
+        events: {
+          load: () => this.loadChartData()
+        },
+      }, 
+      title: {
+        text: undefined
+      }
+    };
+  }
 
   private loadChartData(): void {
     this.dataSource.subscribe(data  => {
@@ -48,11 +60,6 @@ export class ChartComponent {
       this.addSeries(series, false);
       this.update(chartData);
     });
-
-    // const chartData = this.data;// [ ...this.data ];
-    // const series = this.createSeriesOptions(chartData);
-    // this.addSeries(series, false);
-    // this.update(chartData);
   }
 
   private update(data: number[]): void {
@@ -76,5 +83,16 @@ export class ChartComponent {
         enabled: false
       }// as ExtendedPlotCandlestickDataGroupingOptions
     }
+  }
+
+  private updateStyle(): void {
+    if (!this.chartRef)
+      return;
+
+    this.chartRef.series.forEach(serie => {
+      serie.remove(false);
+    })
+
+    this.loadChartData();
   }
 }

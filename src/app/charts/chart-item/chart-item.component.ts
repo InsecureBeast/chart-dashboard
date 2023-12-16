@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ChartStyle } from '../chart-style';
 
 @Component({
     selector: 'app-chart-item',
@@ -16,28 +17,20 @@ export class ChartItemComponent implements OnInit{
   @Output()
   closed = new EventEmitter<void>();
   
-  chartData!: number[];
+  chartStyle: ChartStyle = "line";
   
   constructor() {
     
   }
 
   ngOnInit(): void {
-    this.chartDataSource.subscribe(data => {
-      this.chartData = data;
-    });
   }
 
   close(): void {
     this.closed.emit();
   }
 
-  changeStyle(chartStyle: "line" | "column"): void {
-    // this.chartOptions = {
-    //   series: [{
-    //     data: [1, 2, 3],
-    //     type: chartStyle
-    //   }]
-    // };
+  changeStyle(chartStyle: ChartStyle): void {
+    this.chartStyle = chartStyle;
   }
 }
