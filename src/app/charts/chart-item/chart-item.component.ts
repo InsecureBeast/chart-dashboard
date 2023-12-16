@@ -1,40 +1,43 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { ChartType } from '../chart-type';
-import { ChartsRemoteService } from 'src/app/services/charts-remote.service';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-chart-item',
-  templateUrl: './chart-item.component.html',
-  styleUrls: ['./chart-item.component.scss'],
-  standalone: true,
-  imports:  [
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatButtonToggleModule
-  ]
+    selector: 'app-chart-item',
+    templateUrl: './chart-item.component.html',
+    styleUrls: ['./chart-item.component.scss']
 })
 export class ChartItemComponent implements OnInit{
 
   @Input()
-  public type!: ChartType;
+  chartDataSource!: Observable<number[]>;
+  @Input() 
+  title!: string;
 
   @Output()
-  public closed = new EventEmitter<void>();
+  closed = new EventEmitter<void>();
   
-  constructor(private readonly _chartsService: ChartsRemoteService) {
+  chartData!: number[];
+  
+  constructor() {
     
   }
 
   ngOnInit(): void {
-    this._chartsService.getHumidityData().subscribe()
+    this.chartDataSource.subscribe(data => {
+      this.chartData = data;
+    });
   }
 
   close(): void {
     this.closed.emit();
+  }
+
+  changeStyle(chartStyle: "line" | "column"): void {
+    // this.chartOptions = {
+    //   series: [{
+    //     data: [1, 2, 3],
+    //     type: chartStyle
+    //   }]
+    // };
   }
 }

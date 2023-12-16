@@ -1,17 +1,19 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { ChartType } from '../chart-type';
+import { ChartItemType } from '../chart-item.type';
 
 @Component({
   selector: 'app-chart-new',
   templateUrl: './chart-new.component.html',
   styleUrls: ['./chart-new.component.scss']
 })
-export class ChartNewComponent {
+export class NewChartItemComponent {
 
   @Output()
-  public chartCreated = new EventEmitter<ChartType>();
+  public chartCreated = new EventEmitter<ChartItemType>();
 
-  createItem(type: ChartType) {
+  ChartItemType = ChartItemType;
+
+  createItem(type: ChartItemType) {
     this.chartCreated.emit(type);
   }
 

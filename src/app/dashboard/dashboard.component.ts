@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ChartItem } from '../charts/chart-item/chart-item';
-import { ChartType } from '../charts/chart-type';
+import { ChartItemType } from '../charts/chart-item.type';
+import { ChartItemFactory } from '../charts/chart-item.factory';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,16 +12,16 @@ export class DashboardComponent {
 
   public charts: ChartItem[];
 
-  constructor() {
+  constructor(private readonly _chartItemFactory: ChartItemFactory) {
     this.charts = [
-      new ChartItem(ChartType.Humidity),
-      new ChartItem(ChartType.Light),
-      new ChartItem(ChartType.Pressure),
+      _chartItemFactory.createChartItem(ChartItemType.Humidity),
+      _chartItemFactory.createChartItem(ChartItemType.Pressure),
+      _chartItemFactory.createChartItem(ChartItemType.Light),
     ]    
   }
 
-  chartCreated($event: ChartType): void {
-    this.charts.push(new ChartItem($event));
+  chartCreated($event: ChartItemType): void {
+    this.charts.push(this._chartItemFactory.createChartItem($event));
   }
 
   itemClose(item: ChartItem): void {

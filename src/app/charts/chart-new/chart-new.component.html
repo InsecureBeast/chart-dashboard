@@ -1,17 +1,10 @@
 <button mat-icon-button [matMenuTriggerFor]="menu">
   <mat-icon>add</mat-icon>
 </button>
-<mat-menu #menu="matMenu" (click)="createItem(0)">
-  <button mat-menu-item>
-    <span>Temperature</span>
-  </button>
-  <button mat-menu-item (click)="createItem(1)">
-    <span>Humidity</span>
-  </button>
-  <button mat-menu-item (click)="createItem(2)">
-    <span>Light</span>
-  </button>
-  <button mat-menu-item (click)="createItem(3)">
-    <span>Another</span>
-  </button>
+<mat-menu #menu="matMenu">
+  <button *ngFor="let type of ChartItemType | keyvalue"
+            mat-menu-item 
+            (click)="createItem(type.value)">
+      <span>{{type.key}}</span>
+    </button>
 </mat-menu>

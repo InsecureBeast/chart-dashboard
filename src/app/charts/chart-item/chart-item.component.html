@@ -1,16 +1,18 @@
 <mat-card class="example-card">
   <mat-card-header class="card-header">
-    <mat-card-title>{{type}}</mat-card-title>
+    <mat-card-title>{{title}}</mat-card-title>
     <div style="margin: auto;"></div>
-    <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-      <mat-button-toggle value="bar"><mat-icon>bar_chart</mat-icon></mat-button-toggle>
-      <mat-button-toggle value="lines"><mat-icon>show_chart</mat-icon></mat-button-toggle>
+    <mat-button-toggle-group name="chartStyleGroup" (change)="changeStyle(chartStyleGroup.value)" #chartStyleGroup="matButtonToggleGroup" >
+      <mat-button-toggle value="column"><mat-icon>bar_chart</mat-icon></mat-button-toggle>
+      <mat-button-toggle value="line"><mat-icon>show_chart</mat-icon></mat-button-toggle>
     </mat-button-toggle-group>
     <button mat-icon-button class="close-btn" (click)="close()">
       <mat-icon>close</mat-icon>
     </button>
   </mat-card-header>
-  <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+    <app-chart [data]="chartData"
+               [dataSource]="chartDataSource">
+    </app-chart>
   <mat-card-content>
     
   </mat-card-content>
