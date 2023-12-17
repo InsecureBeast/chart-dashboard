@@ -9,7 +9,6 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { CommonModule } from '@angular/common';
-import { ChartUpdateService } from './chart-update.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +31,6 @@ import { ChartUpdateService } from './chart-update.service';
     HighchartsChartModule
   ],
   providers: [
-    ChartUpdateService
   ],
 })
 export class ChartsModule { }

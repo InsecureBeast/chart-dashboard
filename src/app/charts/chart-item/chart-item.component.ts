@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild, AfterViewInit } from '@angular/core';
 import { ChartStyle } from '../chart-style';
-import { ChartUpdateService } from '../chart-update.service';
 import { ChartItemType } from '../chart-item.type';
 import { ChartItemFactory } from '../chart-item.factory';
 import { ChartItem } from './chart-item';
@@ -11,7 +10,7 @@ import { ChartComponent } from '../chart/chart.component';
     templateUrl: './chart-item.component.html',
     styleUrls: ['./chart-item.component.scss']
 })
-export class ChartItemComponent{
+export class ChartItemComponent implements AfterViewInit {
 
   @Input()
   chartItems!: ChartItem[];
@@ -24,14 +23,12 @@ export class ChartItemComponent{
   
   chartStyle: ChartStyle = "line";
   ChartItemType = ChartItemType;
-  get title(): string {
-    return this.chartItems[0].name;
-  }
+  title: string = "";
   
-  constructor(
-    private readonly _chartUpdateService: ChartUpdateService,
-    private readonly _chartItemFactory: ChartItemFactory) {
-    
+  constructor(private readonly _chartItemFactory: ChartItemFactory) {
+  }
+  ngAfterViewInit(): void {
+    this.title = this.chartItems[0].name;
   }
 
   close(): void {
@@ -45,5 +42,6 @@ export class ChartItemComponent{
   addSeries(type: ChartItemType) {
     const item = this._chartItemFactory.createChartItem(type);
     this._chartComponent?.addChartItem(item);
+    this.title = "Complex data"
   }
 }

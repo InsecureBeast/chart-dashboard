@@ -3,7 +3,6 @@ import * as Highcharts from 'highcharts';
 import HC_stock from 'highcharts/modules/stock';
 import { Subject, takeUntil } from 'rxjs';
 import { ChartStyle } from '../chart-style';
-import { ChartUpdateService } from '../chart-update.service';
 import { ChartItem } from '../chart-item/chart-item';
 import { PeriodSelectorService } from 'src/app/services/period-selector.service';
 import { Period } from 'src/app/data/period';
@@ -67,10 +66,7 @@ export class ChartComponent implements OnDestroy {
     return {
       chart: {
         events: {
-          load: () => {
-            this.subscribePeriodChanged();
-            // this.loadChartData();
-          }
+          load: () => this.subscribePeriodChanged()
         },
       }, 
       title: {

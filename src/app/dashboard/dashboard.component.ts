@@ -10,14 +10,9 @@ import { ChartItemFactory } from '../charts/chart-item.factory';
 })
 export class DashboardComponent {
 
-  public charts: ChartItem[];
+  public charts: ChartItem[] = [];
 
   constructor(private readonly _chartItemFactory: ChartItemFactory) {
-    this.charts = [
-      _chartItemFactory.createChartItem(ChartItemType.Humidity),
-      _chartItemFactory.createChartItem(ChartItemType.Pressure),
-      _chartItemFactory.createChartItem(ChartItemType.Light),
-    ]    
   }
 
   chartCreated($event: ChartItemType): void {

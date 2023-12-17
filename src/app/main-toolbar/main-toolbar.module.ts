@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MainToolbarComponent } from './main-toolbar.component';
-import { PeriodSelectorModule } from '../period-selector/period-selector.module';
+import { PeriodSelectorComponent } from '../period-selector/period-selector.component';
 
 @NgModule({
   declarations: [
@@ -12,7 +12,7 @@ import { PeriodSelectorModule } from '../period-selector/period-selector.module'
   ],
   imports: [
     MatToolbarModule,
-    PeriodSelectorModule
+    PeriodSelectorComponent
   ],
   providers: [],
 })
