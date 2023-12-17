@@ -1,10 +1,12 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import HC_stock from 'highcharts/modules/stock';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ChartStyle } from '../chart-style';
 import { ChartUpdateService } from '../chart-update.service';
 import { ChartItem } from '../chart-item/chart-item';
+import { PeriodSelectorService } from 'src/app/services/period-selector.service';
+import { Period } from 'src/app/data/period';
 
 HC_stock(Highcharts);
 
@@ -25,7 +27,8 @@ export class ChartComponent implements OnDestroy {
   @Input()
   set chartStyle(style: ChartStyle) {
     this._chartStyle = style;
-    this.updateStyle();
+    const period = this._periodSelectorService.currentPeriod;
+    this.redrawChart(period);
   }
   get chartStyle(): ChartStyle {
     return this._chartStyle;
@@ -35,7 +38,7 @@ export class ChartComponent implements OnDestroy {
   chartRef!: Highcharts.Chart;
   chartOptions: Highcharts.Options;
   
-  constructor(private readonly _chartUpdateService: ChartUpdateService) {
+  constructor(private readonly _periodSelectorService: PeriodSelectorService) {
     this.chartOptions = this.initChartOptions();
   }
 
@@ -53,7 +56,8 @@ export class ChartComponent implements OnDestroy {
       return;
     
     this.chartItems.push(item);
-    item.source.subscribe(data  => {
+    const period = this._periodSelectorService.currentPeriod;
+    item.getChartData(period).subscribe(data  => {
       const series = this.createSeriesOptions(data, item.name);
       this.chartRef.addSeries(series, true);
     });
@@ -63,7 +67,10 @@ export class ChartComponent implements OnDestroy {
     return {
       chart: {
         events: {
-          load: () => this.loadChartData()
+          load: () => {
+            this.subscribePeriodChanged();
+            // this.loadChartData();
+          }
         },
       }, 
       title: {
@@ -72,9 +79,9 @@ export class ChartComponent implements OnDestroy {
     };
   }
 
-  private loadChartData(): void {
+  private loadChartData(period: Period): void {
     this.chartItems.forEach(item => {
-      item.source.subscribe(data  => {
+      item.getChartData(period).subscribe(data  => {
         const series = this.createSeriesOptions(data, item.name);
         this.chartRef.addSeries(series, true);
       });
@@ -92,7 +99,7 @@ export class ChartComponent implements OnDestroy {
     }
   }
 
-  private updateStyle(): void {
+  private redrawChart(period: Period): void {
     if (!this.chartRef)
       return;
 
@@ -101,6 +108,13 @@ export class ChartComponent implements OnDestroy {
       series.remove(true);
     })
 
-    this.loadChartData();
+    this.loadChartData(period);
+  }
+
+  private subscribePeriodChanged(): void {
+    this._periodSelectorService.periodSelected.pipe(takeUntil(this._destroy))
+    .subscribe(period => {
+      this.redrawChart(period);
+    });
   }
 }

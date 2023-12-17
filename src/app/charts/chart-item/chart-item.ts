@@ -1,8 +1,9 @@
 import { Observable, map } from "rxjs";
+import { Period } from "src/app/data/period";
 import { ChartsRemoteService } from "src/app/services/charts-remote.service";
 
 export abstract class ChartItem {
-  abstract get source(): Observable<number[]>;
+  abstract getChartData(period: Period): Observable<number[]>;
   abstract get name(): string;
 }
 
@@ -11,8 +12,8 @@ export class TemperatureChartItem extends ChartItem {
     super();
   }
   
-  override get source(): Observable<number[]> {
-    return this._chartService.getTemperatureData().pipe(map(data => data.hourly.temperature_2m));
+  override getChartData(period: Period): Observable<number[]> {
+    return this._chartService.getTemperatureData(period).pipe(map(data => data.hourly.temperature_2m));
   }
 
   override get name(): string {
@@ -26,8 +27,8 @@ export class PressureChartItem extends ChartItem {
     super();
   }
   
-  override get source(): Observable<number[]> {
-    return this._chartService.getPressureData().pipe(map(data => data.hourly.surface_pressure));
+  override getChartData(period: Period): Observable<number[]> {
+    return this._chartService.getPressureData(period).pipe(map(data => data.hourly.surface_pressure));
   }
 
   override get name(): string {
@@ -41,8 +42,8 @@ export class HumidityChartItem extends ChartItem {
     super();
   }
   
-  override get source(): Observable<number[]> {
-    return this._chartService.getHumidityData().pipe(map(data => data.hourly.relative_humidity_2m));
+  override getChartData(period: Period): Observable<number[]> {
+    return this._chartService.getHumidityData(period).pipe(map(data => data.hourly.relative_humidity_2m));
   }
 
   override get name(): string {
@@ -56,8 +57,8 @@ export class LightChartItem extends ChartItem {
     super();
   }
   
-  override get source(): Observable<number[]> {
-    return this._chartService.getLightData().pipe(map(data => data.hourly.dew_point_2m));
+  override getChartData(period: Period): Observable<number[]> {
+    return this._chartService.getLightData(period).pipe(map(data => data.hourly.dew_point_2m));
   }
 
   override get name(): string {

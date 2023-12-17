@@ -5,6 +5,7 @@ import { Injectable } from "@angular/core";
 import { HumidityData } from "../data/humidity-data";
 import { LightData } from "../data/light-data";
 import { PressureData } from "../data/pressure-data";
+import { Period } from "../data/period";
 
 @Injectable({providedIn: "root"})
 export class ChartsRemoteService {
@@ -13,7 +14,7 @@ export class ChartsRemoteService {
   constructor(private readonly _client: HttpClient) {
   }
 
-  public getTemperatureData(): Observable<TemperatureData> {
+  public getTemperatureData(period: Period): Observable<TemperatureData> {
     // const url = `${this._baseUrl}&hourly=temperature_2m`;
     // return this._client.get<TemperatureData>(url);
     return of({
@@ -30,12 +31,17 @@ export class ChartsRemoteService {
       },
       hourly: {
         time: ["13:00","14:00","15:00"],
-        temperature_2m: [45,48,97]
+        temperature_2m: [ 
+          this.random(40, 45),  
+          this.random(40, 48),  
+          this.random(40, 50)
+        ]
       }
-    })
+    });
+
   }
 
-  public getHumidityData(): Observable<HumidityData> {
+  public getHumidityData(period: Period): Observable<HumidityData> {
     //const url = `${this._baseUrl}&hourly=relative_humidity_2m`;
     //return this._client.get<HumidityData>(url);
     return of({
@@ -52,12 +58,16 @@ export class ChartsRemoteService {
       },
       hourly: {
         time: ["13:00","14:00","15:00"],
-        relative_humidity_2m: [35,34,33]
+        relative_humidity_2m: [
+          this.random(40, 35),  
+          this.random(40, 38),  
+          this.random(40, 33)
+        ]
       }
     })
   }
 
-  public getLightData(): Observable<LightData> {
+  public getLightData(period: Period): Observable<LightData> {
     // const url = `${this._baseUrl}&hourly=dew_point_2m`;
     // return this._client.get<LightData>(url);
     return of({
@@ -74,12 +84,16 @@ export class ChartsRemoteService {
       },
       hourly: {
         time: ["13:00","14:00","15:00"],
-        dew_point_2m: [89,50,30]
+        dew_point_2m: [
+          this.random(80, 89),  
+          this.random(40, 50),  
+          this.random(20, 30)
+        ]
       }
     })
   }
 
-  public getPressureData(): Observable<PressureData> {
+  public getPressureData(period: Period): Observable<PressureData> {
     // const url = `${this._baseUrl}&hourly=surface_pressure`;
     // return this._client.get<PressureData>(url);
     return of({
@@ -96,8 +110,16 @@ export class ChartsRemoteService {
       },
       hourly: {
         time: ["13:00","14:00","15:00"],
-        surface_pressure: [20,10,30]
+        surface_pressure: [
+          this.random(10, 20),  
+          this.random(1, 10),  
+          this.random(20, 30)
+        ]
       }
     })
+  }
+
+  private random(min:number, max:number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min
   }
 }
